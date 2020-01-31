@@ -247,7 +247,9 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
                   return (snapshot.data != null && snapshot.data?.length != 0)
                       ? ListView.builder(
                     shrinkWrap: true,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    padding: MediaQuery.of(context).padding.add(
+                        EdgeInsets.symmetric(vertical: 16)
+                    ),
                     itemCount: snapshot.data?.length ?? 0,
                     itemBuilder: (BuildContext context, int index) {
                       return widget.suggestionBuilder(
