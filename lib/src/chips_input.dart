@@ -273,12 +273,15 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
           children: <Widget>[
             Flexible(
               flex: 1,
-              child: Text(
-                text,
-                maxLines: 1,
-                overflow: this.textOverflow,
-                style: widget.textStyle ??
-                    theme.textTheme.subhead.copyWith(height: 1.5),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  text,
+                  maxLines: 1,
+                  overflow: this.textOverflow,
+                  style: widget.textStyle ??
+                      theme.textTheme.subhead.copyWith(height: 1.5),
+                ),
               ),
             ),
             Flexible(
