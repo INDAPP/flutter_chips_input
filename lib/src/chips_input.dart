@@ -7,7 +7,8 @@ typedef ChipsInputSuggestions<T> = FutureOr<List<T>> Function(String query);
 typedef ChipSelected<T> = void Function(T data, bool selected);
 typedef ChipsBuilder<T> = Widget Function(
     BuildContext context, ChipsInputState<T> state, T data);
-typedef ChipsInputCandidate<T> = void Function(ChipsInputState<T> state, String candidate);
+typedef ChipsInputCandidate<T> = void Function(
+    ChipsInputState<T> state, String candidate);
 
 class ChipsInput<T> extends StatefulWidget {
   ChipsInput({
@@ -298,18 +299,29 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: requestKeyboard,
-        child: InputDecorator(
-          decoration: widget.decoration,
-          isFocused: _focusNode.hasFocus,
-          isEmpty: _value.text.length == 0 && _chips.length == 0,
-          child: Wrap(
-            children: chipsChildren,
-            spacing: 4.0,
-            runSpacing: 4.0,
+        child: SizeChangedLayoutNotifier(
+          child: NotificationListener<LayoutChangedNotification>(
+            child: InputDecorator(
+              decoration: widget.decoration,
+              isFocused: _focusNode.hasFocus,
+              isEmpty: _value.text.length == 0 && _chips.length == 0,
+              child: Wrap(
+                children: chipsChildren,
+                spacing: 4.0,
+                runSpacing: 4.0,
+              ),
+            ),
+            onNotification: _onSizeNotification,
           ),
         ),
       ),
     );
+  }
+
+  bool _onSizeNotification(LayoutChangedNotification notification) {
+    _initOverlayEntry();
+    _onFocusChanged();
+    return false;
   }
 
   @override
@@ -335,8 +347,7 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
   @override
   void performAction(TextInputAction action) {
     _focusNode.unfocus();
-    if (widget.onChipCandidate != null)
-      widget.onChipCandidate(this, text);
+    if (widget.onChipCandidate != null) widget.onChipCandidate(this, text);
   }
 
   void _updateTextInputState() {
@@ -364,10 +375,10 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
   }
 
   void _onSearchChanged(String value) async {
-    if (value.length > 1
-        && widget.onChipCandidate != null
-        && widget.candidateTriggers.contains(value[value.length-1])) {
-      widget.onChipCandidate(this, value.substring(0, value.length-1));
+    if (value.length > 1 &&
+        widget.onChipCandidate != null &&
+        widget.candidateTriggers.contains(value[value.length - 1])) {
+      widget.onChipCandidate(this, value.substring(0, value.length - 1));
     } else {
       final localId = ++_searchId;
       final results = await widget.findSuggestions(value);
@@ -378,7 +389,6 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
       }
       _suggestionsStreamController.add(_suggestions);
     }
-
   }
 
   @override

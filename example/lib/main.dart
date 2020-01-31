@@ -73,7 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
               keyboardAppearance: Brightness.dark,
               textCapitalization: TextCapitalization.words,
               enabled: true,
-              maxChips: 3,
+              maxChips: 20,
               textStyle:
                   TextStyle(height: 1.5, fontFamily: "Roboto", fontSize: 16),
               decoration: InputDecoration(
@@ -126,6 +126,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   subtitle: Text(profile.email),
                   onTap: () => state.selectSuggestion(profile),
                 );
+              },
+              onChipCandidate: (state, candidate) {
+                state.selectSuggestion(AppProfile(candidate, "$candidate@new.com", 'https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX4057996.jpg'));
               },
             ),
             /*ChipsInput(
