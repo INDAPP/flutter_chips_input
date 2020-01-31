@@ -7,7 +7,7 @@ typedef ChipsInputSuggestions<T> = FutureOr<List<T>> Function(String query);
 typedef ChipSelected<T> = void Function(T data, bool selected);
 typedef ChipsBuilder<T> = Widget Function(
     BuildContext context, ChipsInputState<T> state, T data);
-typedef ChipsInputAction = void Function(TextInputAction action);
+typedef ChipsInputCandidate<T> = void Function(ChipsInputState<T> state, String candidate);
 
 class ChipsInput<T> extends StatefulWidget {
   ChipsInput({
@@ -19,7 +19,8 @@ class ChipsInput<T> extends StatefulWidget {
     @required this.suggestionBuilder,
     @required this.findSuggestions,
     @required this.onChanged,
-    this.onKeyboardAction,
+    this.onChipCandidate,
+    this.candidateTriggers = const [' ', ',', ';'],
     this.onChipTapped,
     this.maxChips,
     this.textStyle,
@@ -44,7 +45,8 @@ class ChipsInput<T> extends StatefulWidget {
   final ValueChanged<T> onChipTapped;
   final ChipsBuilder<T> chipBuilder;
   final ChipsBuilder<T> suggestionBuilder;
-  final ChipsInputAction onKeyboardAction;
+  final ChipsInputCandidate onChipCandidate;
+  final List<String> candidateTriggers;
   final List<T> initialValue;
   final int maxChips;
   final double suggestionsBoxMaxHeight;
@@ -332,8 +334,8 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
   @override
   void performAction(TextInputAction action) {
     _focusNode.unfocus();
-    if (widget.onKeyboardAction != null)
-      widget.onKeyboardAction(action);
+    if (widget.onChipCandidate != null)
+      widget.onChipCandidate(this, text);
   }
 
   void _updateTextInputState() {
@@ -361,14 +363,21 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
   }
 
   void _onSearchChanged(String value) async {
-    final localId = ++_searchId;
-    final results = await widget.findSuggestions(value);
-    if (_searchId == localId && mounted) {
-      setState(() => _suggestions = results
-          .where((profile) => !_chips.contains(profile))
-          .toList(growable: false));
+    if (value.length > 1
+        && widget.onChipCandidate != null
+        && widget.candidateTriggers.contains(value[value.length-1])) {
+      widget.onChipCandidate(this, value.substring(0, value.length-1));
+    } else {
+      final localId = ++_searchId;
+      final results = await widget.findSuggestions(value);
+      if (_searchId == localId && mounted) {
+        setState(() => _suggestions = results
+            .where((profile) => !_chips.contains(profile))
+            .toList(growable: false));
+      }
+      _suggestionsStreamController.add(_suggestions);
     }
-    _suggestionsStreamController.add(_suggestions);
+
   }
 
   @override
