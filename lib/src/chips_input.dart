@@ -33,6 +33,7 @@ class ChipsInput<T> extends StatefulWidget {
     this.inputAction = TextInputAction.done,
     this.keyboardAppearance = Brightness.light,
     this.textCapitalization = TextCapitalization.none,
+    this.padding,
   })  : assert(maxChips == null || initialValue.length <= maxChips),
         super(key: key);
 
@@ -56,6 +57,7 @@ class ChipsInput<T> extends StatefulWidget {
   final String actionLabel;
   final TextInputAction inputAction;
   final Brightness keyboardAppearance;
+  final EdgeInsets padding;
 
   // final Color cursorColor;
 
@@ -219,23 +221,25 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
       ),
     );
 
-    return Column(
-      children: <Widget>[
-        GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTap: requestKeyboard,
-          child: InputDecorator(
-            decoration: widget.decoration,
-            isFocused: _focusNode.hasFocus,
-            isEmpty: _value.text.length == 0 && _chips.length == 0,
-            child: Wrap(
-              children: chipsChildren,
-              spacing: 4.0,
-              runSpacing: 4.0,
+    return Container(
+      padding: widget.padding,
+      child: Column(
+        children: <Widget>[
+          GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: requestKeyboard,
+            child: InputDecorator(
+              decoration: widget.decoration,
+              isFocused: _focusNode.hasFocus,
+              isEmpty: _value.text.length == 0 && _chips.length == 0,
+              child: Wrap(
+                children: chipsChildren,
+                spacing: 4.0,
+                runSpacing: 4.0,
+              ),
             ),
           ),
-        ),
-        Expanded(
+          Expanded(
             child: StreamBuilder(
                 stream: _suggestionsStreamController.stream,
                 builder: (BuildContext context,
@@ -252,8 +256,9 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
                   )
                       : Container();
                 }),
-        ),
-      ],
+          ),
+        ],
+      ),
     );
   }
 
