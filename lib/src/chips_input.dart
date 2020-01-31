@@ -45,7 +45,7 @@ class ChipsInput<T> extends StatefulWidget {
   final ValueChanged<T> onChipTapped;
   final ChipsBuilder<T> chipBuilder;
   final ChipsBuilder<T> suggestionBuilder;
-  final ChipsInputCandidate onChipCandidate;
+  final ChipsInputCandidate<T> onChipCandidate;
   final List<String> candidateTriggers;
   final List<T> initialValue;
   final int maxChips;
