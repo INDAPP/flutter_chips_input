@@ -60,139 +60,74 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text('Flutter Chips Input Example'),
       ),
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       body: Padding(
-        padding: EdgeInsets.all(20),
-        child: Column(
-          children: <Widget>[
-            ChipsInput(
-              initialValue: [
-                AppProfile('John Doe', 'jdoe@flutter.io',
-                    'https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX4057996.jpg'),
-              ],
-              keyboardAppearance: Brightness.dark,
-              textCapitalization: TextCapitalization.words,
-              enabled: true,
-              maxChips: 20,
-              textStyle:
-                  TextStyle(height: 1.5, fontFamily: "Roboto", fontSize: 16),
-              decoration: InputDecoration(
-                // prefixIcon: Icon(Icons.search),
-                // hintText: formControl.hint,
-                labelText: "Select People",
-                // enabled: false,
-                // errorText: field.errorText,
-              ),
-              findSuggestions: (String query) {
-                if (query.length != 0) {
-                  var lowercaseQuery = query.toLowerCase();
-                  return mockResults.where((profile) {
-                    return profile.name
-                            .toLowerCase()
-                            .contains(query.toLowerCase()) ||
-                        profile.email
-                            .toLowerCase()
-                            .contains(query.toLowerCase());
-                  }).toList(growable: false)
-                    ..sort((a, b) => a.name
-                        .toLowerCase()
-                        .indexOf(lowercaseQuery)
-                        .compareTo(
-                            b.name.toLowerCase().indexOf(lowercaseQuery)));
-                }
-                return mockResults;
-              },
-              onChanged: (data) {
-                print(data);
-              },
-              chipBuilder: (context, state, profile) {
-                return InputChip(
-                  key: ObjectKey(profile),
-                  label: Text(profile.name),
-                  avatar: CircleAvatar(
-                    backgroundImage: NetworkImage(profile.imageUrl),
-                  ),
-                  onDeleted: () => state.deleteChip(profile),
-                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                );
-              },
-              suggestionBuilder: (context, state, profile) {
-                return ListTile(
-                  key: ObjectKey(profile),
-                  leading: CircleAvatar(
-                    backgroundImage: NetworkImage(profile.imageUrl),
-                  ),
-                  title: Text(profile.name),
-                  subtitle: Text(profile.email),
-                  onTap: () => state.selectSuggestion(profile),
-                );
-              },
-              onChipCandidate: (state, candidate) {
-                state.selectSuggestion(AppProfile(candidate, "$candidate@new.com", 'https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX4057996.jpg'));
-              },
-            ),
-            /*ChipsInput(
-              initialValue: [
-                AppProfile('John Doe', 'jdoe@flutter.io',
-                    'https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX4057996.jpg'),
-              ],
-              enabled: true,
-              maxChips: 10,
-              textStyle: TextStyle(height: 1.5, fontFamily: "Roboto", fontSize: 16),
-              decoration: InputDecoration(
-                // prefixIcon: Icon(Icons.search),
-                // hintText: formControl.hint,
-                labelText: "Select People",
-                // enabled: false,
-                // errorText: field.errorText,
-              ),
-              findSuggestions: (String query) {
-                if (query.length != 0) {
-                  var lowercaseQuery = query.toLowerCase();
-                  return mockResults.where((profile) {
-                    return profile.name
-                        .toLowerCase()
-                        .contains(query.toLowerCase()) ||
-                        profile.email
-                            .toLowerCase()
-                            .contains(query.toLowerCase());
-                  }).toList(growable: false)
-                    ..sort((a, b) => a.name
-                        .toLowerCase()
-                        .indexOf(lowercaseQuery)
-                        .compareTo(
-                        b.name.toLowerCase().indexOf(lowercaseQuery)));
-                } else {
-                  return mockResults;
-                }
-              },
-              onChanged: (data) {
-                print(data);
-              },
-              chipBuilder: (context, state, profile) {
-                return InputChip(
-                  key: ObjectKey(profile),
-                  label: Text(profile.name),
-                  avatar: CircleAvatar(
-                    backgroundImage: NetworkImage(profile.imageUrl),
-                  ),
-                  onDeleted: () => state.deleteChip(profile),
-                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                );
-              },
-              suggestionBuilder: (context, state, profile) {
-                return ListTile(
-                  key: ObjectKey(profile),
-                  leading: CircleAvatar(
-                    backgroundImage: NetworkImage(profile.imageUrl),
-                  ),
-                  title: Text(profile.name),
-                  subtitle: Text(profile.email),
-                  onTap: () => state.selectSuggestion(profile),
-                );
-              },
-            ),*/
+        padding: EdgeInsets.only(left: 16, right: 16, top: 16),
+        child: ChipsInput(
+          initialValue: [
+            AppProfile('John Doe', 'jdoe@flutter.io',
+                'https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX4057996.jpg'),
           ],
+          keyboardAppearance: Brightness.dark,
+          textCapitalization: TextCapitalization.words,
+          enabled: true,
+          maxChips: 20,
+          textStyle:
+          TextStyle(height: 1.5, fontFamily: "Roboto", fontSize: 16),
+          decoration: InputDecoration(
+            // prefixIcon: Icon(Icons.search),
+            // hintText: formControl.hint,
+            labelText: "Select People",
+            // enabled: false,
+            // errorText: field.errorText,
+          ),
+          findSuggestions: (String query) {
+            if (query.length != 0) {
+              var lowercaseQuery = query.toLowerCase();
+              return mockResults.where((profile) {
+                return profile.name
+                    .toLowerCase()
+                    .contains(query.toLowerCase()) ||
+                    profile.email
+                        .toLowerCase()
+                        .contains(query.toLowerCase());
+              }).toList(growable: false)
+                ..sort((a, b) => a.name
+                    .toLowerCase()
+                    .indexOf(lowercaseQuery)
+                    .compareTo(
+                    b.name.toLowerCase().indexOf(lowercaseQuery)));
+            }
+            return mockResults;
+          },
+          onChanged: (data) {
+            print(data);
+          },
+          chipBuilder: (context, state, profile) {
+            return InputChip(
+              key: ObjectKey(profile),
+              label: Text(profile.name),
+              avatar: CircleAvatar(
+                backgroundImage: NetworkImage(profile.imageUrl),
+              ),
+              onDeleted: () => state.deleteChip(profile),
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            );
+          },
+          suggestionBuilder: (context, state, profile) {
+            return ListTile(
+              key: ObjectKey(profile),
+              leading: CircleAvatar(
+                backgroundImage: NetworkImage(profile.imageUrl),
+              ),
+              title: Text(profile.name),
+              subtitle: Text(profile.email),
+              onTap: () => state.selectSuggestion(profile),
+            );
+          },
+          onChipCandidate: (state, candidate) {
+            state.selectSuggestion(AppProfile(candidate, "$candidate@new.com", 'https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX4057996.jpg'));
+          },
         ),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
