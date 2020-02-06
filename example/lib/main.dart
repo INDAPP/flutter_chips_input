@@ -70,6 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
           keyboardAppearance: Brightness.dark,
           textCapitalization: TextCapitalization.words,
+          closeKeyboardOnReturn: false,
           enabled: true,
           maxChips: 20,
           textStyle:

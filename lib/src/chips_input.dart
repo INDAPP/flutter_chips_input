@@ -17,9 +17,9 @@ class ChipsInput<T> extends StatefulWidget {
     this.decoration = const InputDecoration(),
     this.enabled = true,
     @required this.chipBuilder,
-    @required this.suggestionBuilder,
-    @required this.findSuggestions,
     @required this.onChanged,
+    this.findSuggestions,
+    this.suggestionBuilder,
     this.onChipCandidate,
     this.candidateTriggers = const [' ', ',', ';'],
     this.onChipTapped,
@@ -31,10 +31,12 @@ class ChipsInput<T> extends StatefulWidget {
     this.autocorrect = true,
     this.actionLabel,
     this.inputAction = TextInputAction.done,
+    this.closeKeyboardOnReturn = true,
     this.keyboardAppearance = Brightness.light,
     this.textCapitalization = TextCapitalization.none,
     this.padding,
   })  : assert(maxChips == null || initialValue.length <= maxChips),
+        assert(findSuggestions == null || suggestionBuilder != null),
         super(key: key);
 
   final InputDecoration decoration;
@@ -56,6 +58,7 @@ class ChipsInput<T> extends StatefulWidget {
   final bool autocorrect;
   final String actionLabel;
   final TextInputAction inputAction;
+  final bool closeKeyboardOnReturn;
   final Brightness keyboardAppearance;
   final EdgeInsets padding;
 
@@ -221,24 +224,26 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
       ),
     );
 
+    final inputWidget = GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: requestKeyboard,
+      child: InputDecorator(
+        decoration: widget.decoration,
+        isFocused: _focusNode.hasFocus,
+        isEmpty: _value.text.length == 0 && _chips.length == 0,
+        child: Wrap(
+          children: chipsChildren,
+          spacing: 4.0,
+          runSpacing: 4.0,
+        ),
+      ),
+    );
+
     return Container(
       padding: widget.padding,
-      child: Column(
+      child: widget.findSuggestions != null ? Column(
         children: <Widget>[
-          GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: requestKeyboard,
-            child: InputDecorator(
-              decoration: widget.decoration,
-              isFocused: _focusNode.hasFocus,
-              isEmpty: _value.text.length == 0 && _chips.length == 0,
-              child: Wrap(
-                children: chipsChildren,
-                spacing: 4.0,
-                runSpacing: 4.0,
-              ),
-            ),
-          ),
+          inputWidget,
           Expanded(
             child: StreamBuilder(
                 stream: _suggestionsStreamController.stream,
@@ -260,7 +265,7 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
                 }),
           ),
         ],
-      ),
+      ) : inputWidget,
     );
   }
 
@@ -286,7 +291,7 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
 
   @override
   void performAction(TextInputAction action) {
-    _focusNode.unfocus();
+    if (widget.closeKeyboardOnReturn) _focusNode.unfocus();
     if (widget.onChipCandidate != null) widget.onChipCandidate(this, text);
   }
 
@@ -319,7 +324,7 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
         widget.onChipCandidate != null &&
         widget.candidateTriggers.contains(value[value.length - 1])) {
       widget.onChipCandidate(this, value.substring(0, value.length - 1));
-    } else {
+    } else if (widget.findSuggestions != null) {
       final localId = ++_searchId;
       final results = await widget.findSuggestions(value);
       if (_searchId == localId && mounted) {
