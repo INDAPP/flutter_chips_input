@@ -188,6 +188,12 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
   }
 
   @override
+  AutofillScope get currentAutofillScope => null;
+
+  @override
+  void showAutocorrectionPromptRect(int start, int end) {}
+
+  @override
   Widget build(BuildContext context) {
     var chipsChildren = _chips
         .map<Widget>((data) => widget.chipBuilder(context, this, data))
@@ -348,6 +354,7 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
 
   @override
   TextEditingValue get currentTextEditingValue => _value;
+
 }
 
 class AlwaysDisabledFocusNode extends FocusNode {
