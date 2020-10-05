@@ -355,6 +355,11 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
   @override
   TextEditingValue get currentTextEditingValue => _value;
 
+  @override
+  void performPrivateCommand(String action, Map<String, dynamic> data) {
+    // TODO: implement performPrivateCommand
+  }
+
 }
 
 class AlwaysDisabledFocusNode extends FocusNode {
